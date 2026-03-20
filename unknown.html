@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI แนะนำคณะ</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="card">
+  <h2>🤖 AI แนะนำคณะ</h2>
+
+  <select id="interest">
+    <option value="science">วิทย์</option>
+    <option value="math">คณิต</option>
+    <option value="art">ศิลปะ</option>
+  </select>
+
+  <select id="skill">
+    <option value="analysis">วิเคราะห์</option>
+    <option value="memory">จำ</option>
+    <option value="creative">ความคิดสร้างสรรค์</option>
+  </select>
+
+  <select id="job">
+    <option value="office">ออฟฟิศ</option>
+    <option value="field">ลงพื้นที่</option>
+    <option value="freelance">อิสระ</option>
+  </select>
+
+  <button class="btn1" onclick="analyzeAI()">วิเคราะห์</button>
+
+  <h3 id="result"></h3>
+
+  <!-- 🔥 ปุ่มกลับ -->
+  <button class="btn2" onclick="goBack()">⬅️ กลับ</button>
+
+</div>
+
+<script type="module" src="script.js"></script>
+
+<script>
+function goBack() {
+  window.location.href = "choose.html";
+}
+</script>
+
+</body>
+</html>

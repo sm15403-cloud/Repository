@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>เลือกคณะ</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="card">
+  <h2>🎓 เลือกคณะที่อยากเข้า</h2>
+
+  <select id="major">
+    <option value="engineering">วิศวกรรม</option>
+    <option value="medicine">แพทย์</option>
+    <option value="business">บริหาร</option>
+  </select>
+
+  <button class="btn1" onclick="goNext()">ถัดไป</button>
+  <button class="btn2" onclick="goBack()">⬅️ กลับ</button>
+</div>
+
+<script>
+function goNext() {
+  const major = document.getElementById("major").value;
+  window.location.href = "major.html?major=" + major;
+}
+
+function goBack() {
+  window.location.href = "choose.html";
+}
+</script>
+
+</body>
+</html>

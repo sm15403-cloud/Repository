@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>เนื้อหาวิชา</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .card { max-width:600px; margin:20px auto; padding:20px; border:1px solid #000; border-radius:10px; }
+    button { margin:5px; }
+    .progress-bar { width:100%; background:#ddd; border-radius:5px; margin:10px 0; }
+    .progress-fill { height:20px; background:#4caf50; width:0%; border-radius:5px; text-align:center; color:#fff; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <h2 id="subjectTitle"></h2>
+
+  <ul id="topicsList"></ul>
+  <div id="formula" style="margin:10px 0; font-weight:bold;"></div>
+
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill">0%</div>
+  </div>
+  <p>XP ส่วนตัว: <span id="score">0</span>%</p>
+  <p>เวลาทำล่าสุด: <span id="lastTime">-</span></p>
+
+  <button onclick="goExercise()">ทำแบบฝึกหัดท้ายบท</button>
+  <button onclick="goQuiz()">ทำ Quiz แบบสุ่ม</button>
+  <button onclick="goBack()">⬅️ กลับไปวิชาอื่น</button>
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const major = params.get("major");
+const subject = params.get("subject");
+document.getElementById("subjectTitle").innerText = `📘 วิชา: ${subject}`;
+
+// ตัวอย่างหัวข้อ + สูตร + คะแนนสูงสุด (ครบทุกหัวข้อ)
+const allTopics = {
+  "คณิตศาสตร์":[
+    {id:"set", name:"เซต", formula:"A∪B, A∩B, A-B", max:10},
+    {id:"function", name:"ฟังก์ชัน", formula:"f(x)=mx+b", max:15},
+    {id:"calculus", name:"แคลคูลัส", formula:"d/dx, ∫", max:15}
+  ],
+  "ฟิสิกส์":[
+    {id:"mechanics", name:"กลศาสตร์", formula:"F=ma", max:15},
+    {id:"electric", name:"ไฟฟ้า", formula:"V=IR, P=VI", max:15},
+    {id:"wave", name:"คลื่น", formula:"v=fλ", max:10}
+  ],
+  "ชีววิทยา":[
+    {id:"genetics", name:"พันธุกรรม", formula:"DNA, RNA", max:15},
+    {id:"cell", name:"เซลล์", formula:"Membrane, Nucleus", max:10}
+  ]
+};
+
+const topics = allTopics[subject] || [];
+const ul = document.getElementById("topicsList");
+topics.forEach(t=>{
+    const li = document.createElement("li");
+    li.innerHTML = `<input type="checkbox" class="topic" data-max="${t.max}" id="${t.id}"> ${t.name} <button onclick="showFormula('${t.id}')">ดูสูตร</button>`;
+    ul.appendChild(li);
+});
+
+// แสดงสูตร
+function showFormula(id){
+    let topic = topics.find(t=>t.id===id);
+    document.getElementById("formula").innerText = topic ? topic.formula : "";
+}
+
+// โหลดคะแนนจาก localStorage
+let storedScore = JSON.parse(localStorage.getItem(subject+"Score")) || {};
+let lastTime = localStorage.getItem(subject+"LastTime") || "-";
+document.getElementById("lastTime").innerText = lastTime;
+let score=0;
+document.querySelectorAll('.topic').forEach(item=>{
+  if(storedScore[item.id]) item.checked=true;
+});
+
+// อัปเดตคะแนนและ progress bar
+function updateScore(activity=false){
+  let totalMax=0, current=0;
+  document.querySelectorAll('.topic').forEach(t=>{
+    totalMax += parseInt(t.dataset.max);
+    if(t.checked) current += parseInt(t.dataset.max)*0.9;
+  });
+  score = Math.round(current/totalMax*100);
+  document.getElementById("score").innerText = score;
+  document.getElementById("progressFill").style.width = score+"%";
+
+  let data={};
+  document.querySelectorAll('.topic').forEach(t=>data[t.id]=t.checked);
+  localStorage.setItem(subject+"Score", JSON.stringify(data));
+
+  if(activity){
+    let now = new Date().toLocaleString();
+    document.getElementById("lastTime").innerText = now;
+    localStorage.setItem(subject+"LastTime", now);
+  }
+}
+document.querySelectorAll('.topic').forEach(item=>{
+  item.addEventListener('change', ()=>updateScore(true));
+});
+
+// ปุ่มไปหน้า exercise / quiz
+function goExercise(){ window.location.href=`exercise.html?major=${major}&subject=${subject}`; }
+function goQuiz(){ window.location.href=`quiz.html?major=${major}&subject=${subject}`; }
+function goBack(){ window.location.href=`major.html?major=${major}`; }
+
+updateScore();
+</script>
+</body>
+</html>

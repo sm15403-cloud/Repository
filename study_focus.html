@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Study Time Tracker - Focus Mode</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .card { max-width:600px; margin:20px auto; padding:20px; border:1px solid #000; border-radius:10px; }
+    button { margin:5px; padding:8px 15px; }
+    select { padding:5px; margin:5px; }
+    #timer { font-size:24px; margin:10px 0; font-weight:bold; }
+    #focusWarning { display:none; background:#ffe5e5; padding:10px; margin:10px 0; border:1px solid red; font-weight:bold; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <h2>📚 อ่านหนังสือ (Focus Mode)</h2>
+
+  <label>เลือกวิชา:</label>
+  <select id="subjectSelect">
+    <option value="คณิตศาสตร์">คณิตศาสตร์</option>
+    <option value="ฟิสิกส์">ฟิสิกส์</option>
+    <option value="ชีววิทยา">ชีววิทยา</option>
+  </select>
+
+  <label>เลือกหัวข้อ:</label>
+  <select id="topicSelect"></select>
+
+  <div id="formula" style="margin:10px 0; font-weight:bold;"></div>
+
+  <div id="focusWarning">⚠️ อยู่ในโหมดเรียน! ใช้เฉพาะแอปเกี่ยวกับการเรียน</div>
+
+  <p id="timer">เวลาอ่าน: 00:00:00</p>
+  <p>EXP สะสม: <span id="exp">0</span></p>
+
+  <button id="startBtn">เริ่มอ่าน</button>
+  <button id="stopBtn">หยุดอ่าน</button>
+  <button id="resetBtn">รีเซ็ตเวลา</button>
+</div>
+
+<script>
+const subjectSelect = document.getElementById("subjectSelect");
+const topicSelect = document.getElementById("topicSelect");
+const formulaDiv = document.getElementById("formula");
+const timerEl = document.getElementById("timer");
+const expEl = document.getElementById("exp");
+const focusWarning = document.getElementById("focusWarning");
+
+let timer = null;
+let seconds = 0;
+
+// ตัวอย่างหัวข้อและสูตร
+const allTopics = {
+  "คณิตศาสตร์":[
+    {id:"set", name:"เซต", formula:"A∪B, A∩B, A-B"},
+    {id:"function", name:"ฟังก์ชัน", formula:"f(x)=mx+b"},
+    {id:"calculus", name:"แคลคูลัส", formula:"d/dx, ∫"}
+  ],
+  "ฟิสิกส์":[
+    {id:"mechanics", name:"กลศาสตร์", formula:"F=ma"},
+    {id:"electric", name:"ไฟฟ้า", formula:"V=IR, P=VI"},
+    {id:"wave", name:"คลื่น", formula:"v=fλ"}
+  ],
+  "ชีววิทยา":[
+    {id:"genetics", name:"พันธุกรรม", formula:"DNA, RNA"},
+    {id:"cell", name:"เซลล์", formula:"Membrane, Nucleus"}
+  ]
+};
+
+// โหลดหัวข้อตามวิชา
+function loadTopics(){
+  const subject = subjectSelect.value;
+  topicSelect.innerHTML="";
+  allTopics[subject].forEach(t=>{
+    let opt = document.createElement("option");
+    opt.value = t.id;
+    opt.innerText = t.name;
+    topicSelect.appendChild(opt);
+  });
+  showFormula();
+}
+function showFormula(){
+  const subject = subjectSelect.value;
+  const topicId = topicSelect.value;
+  const topic = allTopics[subject].find(t=>t.id===topicId);
+  formulaDiv.innerText = topic ? "สูตร: "+topic.formula : "";
+}
+
+// โหลดข้อมูลเวลาและ EXP จาก localStorage
+function loadData(){
+  const subject = subjectSelect.value;
+  const topic = topicSelect.value;
+  const data = JSON.parse(localStorage.getItem("study_"+subject+"_"+topic)) || {seconds:0, exp:0};
+  seconds = data.seconds;
+  timerEl.innerText = "เวลาอ่าน: "+formatTime(seconds);
+  expEl.innerText = data.exp;
+}
+
+// บวก EXP ทุก 60 วินาที = 1 EXP
+function tick(){
+  seconds++;
+  if(seconds%60===0) {
+    let currentExp = parseInt(expEl.innerText);
+    expEl.innerText = currentExp+1;
+  }
+  timerEl.innerText = "เวลาอ่าน: "+formatTime(seconds);
+}
+
+// ฟอร์แมตเวลา
+function formatTime(s){
+  let h = Math.floor(s/3600);
+  let m = Math.floor((s%3600)/60);
+  let sec = s%60;
+  return `${h.toString().padStart(2,"0")}:${m.toString().padStart(2,"0")}:${sec.toString().padStart(2,"0")}`;
+}
+
+// ปุ่มเริ่ม
+document.getElementById("startBtn").addEventListener("click", ()=>{
+  focusWarning.style.display="block"; // เปิด Focus Mode
+  if(timer) clearInterval(timer);
+  timer = setInterval(()=>{
+    tick();
+    saveData();
+  },1000);
+});
+
+// ปุ่มหยุด
+document.getElementById("stopBtn").addEventListener("click", ()=>{
+  if(timer) clearInterval(timer);
+  saveData();
+});
+
+// ปุ่มรีเซ็ต
+document.getElementById("resetBtn").addEventListener("click", ()=>{
+  if(timer) clearInterval(timer);
+  seconds = 0;
+  timerEl.innerText = "เวลาอ่าน: 00:00:00";
+  expEl.innerText = 0;
+  saveData();
+});
+
+// บันทึกเวลาและ EXP
+function saveData(){
+  const subject = subjectSelect.value;
+  const topic = topicSelect.value;
+  localStorage.setItem("study_"+subject+"_"+topic, JSON.stringify({seconds:seconds, exp:parseInt(expEl.innerText)}));
+}
+
+// โหลดหัวข้อและข้อมูลครั้งแรก
+subjectSelect.addEventListener("change", ()=>{
+  loadTopics();
+  loadData();
+});
+topicSelect.addEventListener("change", loadData);
+
+loadTopics();
+loadData();
+
+// 🚨 ตรวจจับเมื่อผู้ใช้ออกจากแท็บ
+document.addEventListener("visibilitychange", ()=>{
+  if(document.hidden){
+    if(timer) clearInterval(timer);
+    focusWarning.innerText = "⚠️ คุณออกจากโหมดเรียน! Timer หยุด";
+    focusWarning.style.display="block";
+  } else {
+    focusWarning.innerText = "⚠️ อยู่ในโหมดเรียน! ใช้เฉพาะแอปเกี่ยวกับการเรียน";
+  }
+});
+</script>
+</body>
+</html>

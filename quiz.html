@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Quiz แบบสุ่ม</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .card { max-width:600px; margin:20px auto; padding:20px; border:1px solid #000; border-radius:10px; }
+    button { margin:5px; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <h2 id="subjectTitle"></h2>
+  <div id="quizArea"></div>
+  <p>XP ปัจจุบัน: <span id="score">0</span>%</p>
+  <button onclick="nextQuestion()">คำถามถัดไป</button>
+  <button onclick="goBack()">⬅️ กลับไปวิชา</button>
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const major = params.get("major");
+const subject = params.get("subject");
+document.getElementById("subjectTitle").innerText = `📘 วิชา: ${subject}`;
+
+// โหลดหัวข้อที่ติ๊กไว้
+let storedScore = JSON.parse(localStorage.getItem(subject+"Score")) || {};
+let checkedTopics = Object.keys(storedScore).filter(k=>storedScore[k]);
+if(checkedTopics.length===0){ alert("ติ๊กหัวข้อก่อนทำ Quiz"); window.location.href=`subject.html?major=${major}&subject=${subject}`; }
+
+let score = Math.round(checkedTopics.length*0.9 / checkedTopics.length*100);
+document.getElementById("score").innerText = score;
+
+// ตัวอย่างคำถามจริงต่อหัวข้อ
+const quizQuestions = [
+  {q:"เซต A∪B คืออะไร?", a:["รวมทุกสมาชิกของ A และ B","สมาชิกที่อยู่ในทั้ง A และ B"], correct:0, topic:"set"},
+  {q:"ฟังก์ชัน f(x)=2x+3 ค่าของ f(2)?", a:["7","5"], correct:0, topic:"function"},
+  {q:"หาค่าลูกศรของแรง F=ma ถ้า m=2kg, a=3m/s²?", a:["6 N","5 N"], correct:0, topic:"mechanics"},
+  {q:"แรงไฟฟ้า V=IR ถ้า V=9V, R=3Ω?", a:["3 A","0.33 A"], correct:0, topic:"electric"},
+  {q:"DNA คือสารพันธุกรรมของสิ่งมีชีวิตใช่หรือไม่?", a:["ใช่","ไม่ใช่"], correct:0, topic:"genetics"}
+];
+
+let filtered = quizQuestions.filter(q=>checkedTopics.includes(q.topic));
+let questionIndex = 0;
+
+// แสดงคำถาม
+function showQuestion(){
+  let question = filtered[questionIndex];
+  let html = `<p><b>คำถาม:</b> ${question.q}</p>`;
+  question.a.forEach((ans,i)=>{
+    html += `<button onclick="checkAnswer(${i},${question.correct})">${ans}</button>`;
+  });
+  document.getElementById("quizArea").innerHTML = html;
+}
+showQuestion();
+
+// ตรวจคำตอบ
+function checkAnswer(selected, correct){
+  if(selected===correct){
+    alert("ถูกต้อง! XP +5%");
+    score=Math.min(score+5,100);
+  } else { alert("ผิด! ลองอีกครั้ง"); }
+  localStorage.setItem(subject+"LastTime", new Date().toLocaleString());
+  document.getElementById("score").innerText = score;
+}
+
+// คำถามถัดไป
+function nextQuestion(){
+  questionIndex = (questionIndex+1) % filtered.length;
+  showQuestion();
+}
+
+function goBack(){ window.location.href=`subject.html?major=${major}&subject=${subject}`; }
+</script>
+</body>
+</html>

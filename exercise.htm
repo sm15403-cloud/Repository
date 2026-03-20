@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>แบบฝึกหัดท้ายบท</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .card { max-width:600px; margin:20px auto; padding:20px; border:1px solid #000; border-radius:10px; }
+    button { margin:5px; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <h2 id="subjectTitle"></h2>
+  <p>ทำแบบฝึกหัดท้ายบท → คะแนนเต็ม 100%</p>
+  <button onclick="finishExercise()">ทำเสร็จ</button>
+  <button onclick="goBack()">⬅️ กลับไปวิชา</button>
+</div>
+
+<script>
+// รับค่า major และ subject
+const params = new URLSearchParams(window.location.search);
+const major = params.get("major");
+const subject = params.get("subject");
+
+document.getElementById("subjectTitle").innerText = `📘 วิชา: ${subject}`;
+
+// ฟังก์ชันทำแบบฝึกหัดเสร็จ → XP 100%
+function finishExercise(){
+  // ติ๊กหัวข้อทั้งหมด
+  let topics = JSON.parse(localStorage.getItem(subject+"Score")) || {};
+  for(let t in topics){ topics[t] = true; }
+  localStorage.setItem(subject+"Score", JSON.stringify(topics));
+
+  // อัพคะแนนเต็ม
+  localStorage.setItem(subject+"LastTime", new Date().toLocaleString());
+
+  alert("ทำแบบฝึกหัดท้ายบทเสร็จ! คะแนนเต็ม 100%");
+}
+
+// กลับไป subject.html
+function goBack(){
+  window.location.href = `subject.html?major=${major}&subject=${subject}`;
+}
+</script>
+</body>
+</html>

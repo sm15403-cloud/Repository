@@ -1,0 +1,122 @@
+/* 🌈 พื้นหลัง */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 💳 กล่อง (card) */
+.card {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(15px);
+  padding: 40px;
+  border-radius: 25px;
+  text-align: center;
+  color: white;
+  width: 320px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+  animation: fadeIn 1s ease;
+}
+
+/* ✨ animation เข้า */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 📝 input + select */
+input, select {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 12px;
+  border: none;
+  outline: none;
+}
+
+/* 🔘 ปุ่มพื้นฐาน */
+button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 15px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 1px;
+}
+
+/* 💥 hover เด้ง */
+button:hover {
+  transform: scale(1.1) rotate(1deg);
+  box-shadow: 0 0 20px rgba(255,255,255,0.6);
+}
+
+/* 🎮 กดแล้วเด้ง */
+button:active {
+  transform: scale(0.9);
+  box-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+/* ✨ เอฟเฟกต์แสงวิ่ง */
+button::after {
+  content: "";
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background: rgba(255,255,255,0.2);
+  top: -50%;
+  left: -50%;
+  transform: rotate(45deg);
+  transition: 0.5s;
+}
+
+button:hover::after {
+  top: 100%;
+  left: 100%;
+}
+
+/* 🌈 ปุ่มฟ้า (ค้นหา) */
+.btn1 {
+  background: linear-gradient(135deg, #00f2fe, #4facfe);
+  box-shadow: 0 0 10px #00f2fe, 0 0 20px #4facfe;
+}
+
+/* 🔥 ปุ่มชมพู (เลือกคณะ) */
+.btn2 {
+  background: linear-gradient(135deg, #ff4e50, #f9d423);
+  box-shadow: 0 0 10px #ff4e50, 0 0 20px #f9d423;
+}
+
+/* 📱 ปุ่มเรียง */
+.btn-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* 📱 responsive มือถือ */
+@media (max-width: 500px) {
+  .card {
+    width: 90%;
+    padding: 25px;
+  }
+
+  .btn-group {
+    flex-direction: column;
+  }
+}

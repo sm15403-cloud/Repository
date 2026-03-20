@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MyTCAS Style</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="card">
+
+  <h2 id="title"></h2>
+
+  <!-- 📊 ข้อมูลคณะ -->
+  <h3 id="competition"></h3>
+  <h3 id="exam"></h3>
+  <h3 id="score"></h3>
+
+  <!-- 📅 Timeline -->
+  <h3 id="timeline"></h3>
+
+  <!-- ➕ เพิ่มรายชื่อวิชา -->
+  <h3>📚 วิชาในคณะ</h3>
+  <div id="subjects"></div>
+
+  <button class="btn2" onclick="goBack()">⬅️ กลับ</button>
+
+</div>
+
+<script>
+// รับค่า major
+const params = new URLSearchParams(window.location.search);
+const major = params.get("major");
+
+// ข้อมูลคณะ
+if (major === "engineering") {
+  document.getElementById("title").innerText = "🎓 วิศวกรรม";
+  document.getElementById("competition").innerText = "👥 แข่งขันสูง (~20,000 คน)";
+  document.getElementById("exam").innerText = "📚 TGAT + TPAT3 + A-Level คณิต ฟิสิกส์";
+  document.getElementById("score").innerText = "🎯 คะแนนที่ควรได้: 60+";
+}
+
+if (major === "medicine") {
+  document.getElementById("title").innerText = "🎓 แพทย์";
+  document.getElementById("competition").innerText = "👥 แข่งขันสูงมาก (~30,000 คน)";
+  document.getElementById("exam").innerText = "📚 TGAT + TPAT1 + A-Level ชีวะ เคมี";
+  document.getElementById("score").innerText = "🎯 คะแนนที่ควรได้: สูงมาก";
+}
+
+if (major === "business") {
+  document.getElementById("title").innerText = "🎓 บริหาร";
+  document.getElementById("competition").innerText = "👥 แข่งขันปานกลาง (~15,000 คน)";
+  document.getElementById("exam").innerText = "📚 TGAT + A-Level คณิต อังกฤษ";
+  document.getElementById("score").innerText = "🎯 คะแนนที่ควรได้: ปานกลาง";
+}
+
+// Timeline
+document.getElementById("timeline").innerText = `
+📅 TCAS Timeline
+
+🟢 รอบ 1 Portfolio: ต.ค. - พ.ย.
+🔵 รอบ 2 Quota: ม.ค. - ก.พ.
+🟡 รอบ 3 Admission: มี.ค. - เม.ย.
+🔴 รอบ 4 Direct: พ.ค.
+`;
+
+// สร้างปุ่มวิชา
+const subjectsDiv = document.getElementById("subjects");
+let subjects = [];
+if(major === "engineering") subjects = ["คณิตศาสตร์","ฟิสิกส์"];
+if(major === "medicine") subjects = ["ชีววิทยา","เคมี"];
+if(major === "business") subjects = ["คณิตศาสตร์","อังกฤษ"];
+
+subjects.forEach(sub=>{
+  const btn = document.createElement("button");
+  btn.innerText = sub;
+  btn.style.margin = "5px";
+  btn.onclick = ()=> window.location.href = `subject.html?major=${major}&subject=${sub}`;
+  subjectsDiv.appendChild(btn);
+});
+
+// กลับ
+function goBack() { window.location.href = "known.html"; }
+</script>
+
+</body>
+</html>

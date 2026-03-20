@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>เลือกเส้นทาง</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="card">
+  <h2>🎯 เลือกเส้นทางของคุณ</h2>
+
+  <div class="btn-group">
+    <button class="btn1" onclick="goUnknown()">
+      🔍 ค้นหาคณะที่ใช่
+    </button>
+
+    <button class="btn2" onclick="goKnown()">
+      🎓 มีเป้าหมายแล้ว
+    </button>
+  </div>
+
+  <!-- ปุ่มกลับไปหน้า Hub -->
+  <div style="margin-top:20px;">
+    <button class="btn3" onclick="goHub()">⬅️ กลับไปหน้า Hub</button>
+  </div>
+
+</div>
+
+<script>
+function goUnknown() {
+  window.location.href = "unknown.html";
+}
+
+function goKnown() {
+  window.location.href = "known.html";
+}
+
+// ฟังก์ชันกลับไป Hub
+function goHub() {
+  window.location.href = "hub.html";
+}
+</script>
+
+</body>
+</html>
